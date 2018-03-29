@@ -1,69 +1,59 @@
 package com.yfbx.rxdemo.activity;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.yfbx.rxdemo.LoginModel;
 import com.yfbx.rxdemo.R;
 import com.yfbx.rxdemo.bean.NetResult;
 import com.yfbx.rxdemo.bean.User;
 import com.yfbx.rxdemo.net.Api;
-import com.yfbx.rxdemo.net.MySubscriber;
+import com.yfbx.rxdemo.net.ArraySubscriber;
+import com.yfbx.rxdemo.net.EntitySubscriber;
 import com.yfbx.rxdemo.net.Net;
+import com.yfbx.rxdemo.net.StringSubscriber;
+
+import java.util.List;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView text;
-    private Button btn;
-    private ProgressDialog pd;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pd = new ProgressDialog(this);
-
-        btn = (Button) findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
-
-        text = (TextView) findViewById(R.id.info);
     }
 
     /**
      * 网络请求
      */
-    private void login() {
-        pd.show();//在doOnNext中执行不起作用
-        Net.create(Api.class)
-                .login("username", "password")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<NetResult<User>>() {
-                    @Override
-                    public void onCompleted(boolean isSuccess, String msg) {
-                        pd.dismiss();
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    }
+    private void testLogin() {
+        LoginModel.login("", "", new EntitySubscriber<User>() {
+            @Override
+            public void onSuccess(User user) {
 
-                    @Override
-                    public void onSuccess(NetResult<User> userHttpResult) {
-                        text.setText(userHttpResult.toString());
-                    }
-                });
+            }
+        });
+
+        LoginModel.getUser("", "", new ArraySubscriber<User>() {
+            @Override
+            public void onSuccess(List<User> list) {
+
+            }
+        });
+
+        LoginModel.getJson("", "", new StringSubscriber() {
+            @Override
+            public void onSuccess(String result) {
+
+            }
+        });
+
     }
 
     /**
@@ -73,14 +63,19 @@ public class MainActivity extends AppCompatActivity {
         Observable.concat(getCache(), netData())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<User>() {
+                .subscribe(new Subscriber<User>() {
                     @Override
-                    public void onCompleted(boolean isSuccess, String msg) {
+                    public void onCompleted() {
 
                     }
 
                     @Override
-                    public void onSuccess(User user) {
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(User user) {
 
                     }
                 });

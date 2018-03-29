@@ -20,6 +20,7 @@ public class Net {
 
 
     private static final String HOST = "";
+    public static final int RET_SUCCESS = 200;
 
     /**
      * 创建API实例
