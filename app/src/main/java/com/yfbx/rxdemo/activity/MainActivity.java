@@ -12,6 +12,7 @@ import com.yfbx.rxdemo.api.Api;
 import com.yfbx.rxdemo.bean.User;
 import com.yfbx.rxdemo.rxjava.net.Net;
 import com.yfbx.rxdemo.rxjava.net.NetResult;
+import com.yfbx.rxdemo.rxjava.net.NetSchedulers;
 import com.yfbx.rxdemo.rxjava.net.NetSubscriber;
 import com.yfbx.rxdemo.rxjava.net.SimpleSubscriber;
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         login();
 
-        btn = (Button) findViewById(R.id.btn);
+        btn = findViewById(R.id.btn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        text = (TextView) findViewById(R.id.info);
+        text = findViewById(R.id.info);
     }
 
     /**
@@ -55,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
         pd.show();//在doOnNext中执行不起作用
         Net.create(Api.class)
                 .login("admin", "admin")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(NetSchedulers.<User>ioToUi())
                 .subscribe(new NetSubscriber<User>() {
 
                     @Override
@@ -69,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private void getList() {
         Net.create(Api.class)
                 .getList("", "")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(NetSchedulers.<List<User>>ioToUi())
                 .subscribe(new NetSubscriber<List<User>>() {
                     @Override
                     public void onSuccess(NetResult<List<User>> result) {
