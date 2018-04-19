@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.bean;
+package com.yfbx.rxdemo.rxjava.net;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -17,6 +17,5 @@ public class NetResult<T> {
 
     @SerializedName(value = "data", alternate = {"contents"})
     public T data;
-
 
 }

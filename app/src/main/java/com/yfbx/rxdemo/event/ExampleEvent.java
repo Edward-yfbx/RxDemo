@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.rxbus.event;
+package com.yfbx.rxdemo.event;
 
 /**
  * Date:2017/12/15
@@ -6,5 +6,5 @@ package com.yfbx.rxdemo.rxbus.event;
  * Description:
  */
 public class ExampleEvent {
-    public String code;
+
 }

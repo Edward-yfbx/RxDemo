@@ -1,10 +1,8 @@
 package com.yfbx.rxdemo.activity;
 
-import com.yfbx.rxdemo.rxbus.RxBus;
-import com.yfbx.rxdemo.rxbus.RxBusSubscriber;
-import com.yfbx.rxdemo.rxbus.event.ExampleEvent;
-
-import rx.android.schedulers.AndroidSchedulers;
+import com.yfbx.rxdemo.event.ExampleEvent;
+import com.yfbx.rxdemo.rxjava.rxbus.RxBus;
+import com.yfbx.rxdemo.rxjava.rxbus.RxBusSubscriber;
 
 /**
  * Date:2017/12/15
@@ -20,15 +18,11 @@ public class ExBusDemo {
 
 
     private void onEvent() {
-        RxBus.getDefault()
-                .toObservable(ExampleEvent.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new RxBusSubscriber<ExampleEvent>() {
-                    @Override
-                    protected void onEvent(ExampleEvent exampleEvent) {
+        RxBus.registerEvent(ExampleEvent.class, new RxBusSubscriber<ExampleEvent>() {
+            @Override
+            protected void onEvent(ExampleEvent exampleEvent) {
 
-                    }
-
-                });
+            }
+        });
     }
 }

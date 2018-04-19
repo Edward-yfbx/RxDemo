@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.net;
+package com.yfbx.rxdemo.rxjava.net;
 
 
 import java.io.IOException;
@@ -19,8 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Net {
 
 
-    private static final String HOST = "";
-    public static final int RET_SUCCESS = 200;
+    private static final String HOST = "http://122.97.247.131:8005/";
 
     /**
      * 创建API实例

@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.rxbus;
+package com.yfbx.rxdemo.rxjava.rxbus;
 
 import rx.Subscriber;
 

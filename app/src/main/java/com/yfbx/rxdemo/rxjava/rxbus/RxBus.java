@@ -1,6 +1,7 @@
-package com.yfbx.rxdemo.rxbus;
+package com.yfbx.rxdemo.rxjava.rxbus;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
@@ -25,6 +26,10 @@ public class RxBus {
             }
         }
         return instance;
+    }
+
+    public static <T> void registerEvent(Class<T> clazz, RxBusSubscriber<T> subscriber) {
+        getDefault().toObservable(clazz).observeOn(AndroidSchedulers.mainThread()).subscribe(subscriber);
     }
 
     public void post(Object event) {
