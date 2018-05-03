@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Net {
 
 
-    private static final String HOST = "http://122.97.247.131:8005/";
+    private static final String HOST = "http://192.168.1.8:7080/";
 
     /**
      * 创建API实例

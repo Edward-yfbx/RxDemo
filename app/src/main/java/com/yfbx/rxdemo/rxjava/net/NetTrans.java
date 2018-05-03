@@ -10,15 +10,11 @@ import rx.schedulers.Schedulers;
  * Description:
  */
 
-public class NetSchedulers<T> implements Observable.Transformer<NetResult<T>, NetResult<T>> {
-
-
-    public static <T> NetSchedulers<T> ioToUi() {
-        return new NetSchedulers<T>();
-    }
+public class NetTrans<T> implements Observable.Transformer<NetResult<T>, NetResult<T>> {
 
     @Override
     public Observable<NetResult<T>> call(Observable<NetResult<T>> observable) {
-        return observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        return observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

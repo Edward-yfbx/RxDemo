@@ -1,10 +1,14 @@
 package com.yfbx.rxdemo.rxjava.net;
 
-import android.util.Log;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Handler;
+import android.widget.Toast;
 
-import com.google.gson.Gson;
+import com.yfbx.rxdemo.App;
 
-import rx.Observer;
+import rx.Subscriber;
 
 
 /**
@@ -13,31 +17,54 @@ import rx.Observer;
  * Description:
  */
 
-public abstract class NetSubscriber<T> implements Observer<NetResult<T>> {
+public abstract class NetSubscriber<T> extends Subscriber<NetResult<T>> implements DialogInterface.OnCancelListener {
 
-    private static final String TAG = "NET";
+    private ProgressDialog pd;
+
+    public NetSubscriber() {
+    }
+
+    public NetSubscriber(Context context) {
+        pd = new ProgressDialog(context);
+        pd.setOnCancelListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        if (pd == null) {
+            return;
+        }
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                pd.show();
+            }
+        });
+    }
 
     @Override
     public void onCompleted() {
+        if (pd != null) {
+            pd.dismiss();
+        }
     }
 
     @Override
     public void onError(Throwable e) {
         e.printStackTrace();
-        onFinish(false, e.getMessage());
+        Toast.makeText(App.getApp(), e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onNext(NetResult<T> result) {
-        Log.i(TAG, new Gson().toJson(result));
-        onSuccess(result);
-        onFinish(true, result.msg);
+        onSuccess(result.code, result.msg, result.data);
     }
 
+    public abstract void onSuccess(int code, String msg, T t);
 
-    public abstract void onSuccess(NetResult<T> result);
 
-    public void onFinish(boolean isError, String msg) {
-
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        unsubscribe();
     }
 }

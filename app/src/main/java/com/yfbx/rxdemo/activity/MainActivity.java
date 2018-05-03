@@ -1,9 +1,7 @@
 package com.yfbx.rxdemo.activity;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,13 +10,13 @@ import com.yfbx.rxdemo.api.Api;
 import com.yfbx.rxdemo.bean.User;
 import com.yfbx.rxdemo.rxjava.net.Net;
 import com.yfbx.rxdemo.rxjava.net.NetResult;
-import com.yfbx.rxdemo.rxjava.net.NetSchedulers;
 import com.yfbx.rxdemo.rxjava.net.NetSubscriber;
-import com.yfbx.rxdemo.rxjava.net.SimpleSubscriber;
+import com.yfbx.rxdemo.rxjava.net.NetTrans;
 
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -27,52 +25,38 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView text;
     private Button btn;
-    private ProgressDialog pd;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pd = new ProgressDialog(this);
-
-
         login();
 
-        btn = findViewById(R.id.btn);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getList();
-            }
-        });
-
-        text = findViewById(R.id.info);
     }
 
     /**
      * 网络请求
      */
     private void login() {
-        pd.show();//在doOnNext中执行不起作用
         Net.create(Api.class)
                 .login("admin", "admin")
-                .compose(NetSchedulers.<User>ioToUi())
-                .subscribe(new NetSubscriber<User>() {
-
+                .compose(new NetTrans<User>())
+                .subscribe(new NetSubscriber<User>(this) {
                     @Override
-                    public void onSuccess(NetResult<User> result) {
+                    public void onSuccess(int code, String msg, User user) {
 
                     }
+
                 });
     }
 
     private void getList() {
         Net.create(Api.class)
                 .getList("", "")
-                .compose(NetSchedulers.<List<User>>ioToUi())
+                .compose(new NetTrans<List<User>>())
                 .subscribe(new NetSubscriber<List<User>>() {
                     @Override
-                    public void onSuccess(NetResult<List<User>> result) {
+                    public void onSuccess(int code, String msg, List<User> users) {
 
                     }
                 });
@@ -85,7 +69,17 @@ public class MainActivity extends AppCompatActivity {
         Observable.concat(getCache(), netData())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleSubscriber<User>() {
+                .subscribe(new Subscriber<User>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
                     @Override
                     public void onNext(User user) {
 
