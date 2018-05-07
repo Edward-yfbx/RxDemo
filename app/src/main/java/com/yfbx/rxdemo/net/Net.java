@@ -1,7 +1,9 @@
 package com.yfbx.rxdemo.net;
 
 
-import com.yfbx.rxdemo.net.interceptor.NetInterceptor;
+import com.yfbx.rxdemo.BuildConfig;
+import com.yfbx.rxdemo.net.interceptor.HeaderInterceptor;
+import com.yfbx.rxdemo.net.interceptor.LogInterceptor;
 import com.yfbx.rxdemo.net.interceptor.ProgressInterceptor;
 
 import okhttp3.Headers;
@@ -18,9 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class Net {
 
-    private static final String TAG = "Net";
     private static final String HOST = "";
-
 
     /**
      * 创建API实例
@@ -34,23 +34,6 @@ public class Net {
     }
 
     /**
-     * 创建Retrofit 实例
-     */
-    private static Retrofit getRetrofit() {
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
-        //加入请求头
-        client.addInterceptor(new NetInterceptor(getHeaders()));
-//        client.addInterceptor(new NetInterceptor());
-
-        Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl(HOST);
-        builder.addConverterFactory(GsonConverterFactory.create());
-        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());
-        builder.client(client.build());
-        return builder.build();
-    }
-
-    /**
      * 请求头
      */
     private static Headers getHeaders() {
@@ -59,6 +42,25 @@ public class Net {
         return builder.build();
     }
 
+    /**
+     * 创建Retrofit 实例
+     */
+    private static Retrofit getRetrofit() {
+        OkHttpClient.Builder client = new OkHttpClient.Builder();
+        client.addInterceptor(new HeaderInterceptor(getHeaders()));
+        if (BuildConfig.DEBUG) {
+            LogInterceptor logInterceptor = new LogInterceptor();
+            logInterceptor.setLevel(LogInterceptor.Level.BODY);
+            client.addInterceptor(logInterceptor);
+        }
+
+        Retrofit.Builder builder = new Retrofit.Builder();
+        builder.baseUrl(HOST);
+        builder.addConverterFactory(GsonConverterFactory.create());
+        builder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());
+        builder.client(client.build());
+        return builder.build();
+    }
 
     private static Retrofit getLoader() {
         OkHttpClient.Builder client = new OkHttpClient.Builder();

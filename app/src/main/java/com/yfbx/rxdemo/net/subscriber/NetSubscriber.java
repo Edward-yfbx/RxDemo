@@ -65,7 +65,6 @@ public abstract class NetSubscriber<T> extends Subscriber<NetResult<T>> implemen
 
     @Override
     public void onNext(NetResult<T> result) {
-        Log.i(TAG, new Gson().toJson(result));
         onSuccess(result.code, result.message, result.data);
     }
 

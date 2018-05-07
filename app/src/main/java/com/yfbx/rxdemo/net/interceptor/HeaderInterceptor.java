@@ -1,7 +1,5 @@
 package com.yfbx.rxdemo.net.interceptor;
 
-import android.util.Log;
-
 import java.io.IOException;
 
 import okhttp3.Headers;
@@ -15,15 +13,11 @@ import okhttp3.Response;
  * Description:
  */
 
-public class NetInterceptor implements Interceptor {
+public class HeaderInterceptor implements Interceptor {
 
-    private static final String TAG = "NET";
     private Headers headers;
 
-    public NetInterceptor() {
-    }
-
-    public NetInterceptor(Headers headers) {
+    public HeaderInterceptor(Headers headers) {
         this.headers = headers;
     }
 
@@ -36,7 +30,6 @@ public class NetInterceptor implements Interceptor {
         if (headers != null) {
             builder.headers(headers);
         }
-        Log.i(TAG, "URL:" + request.url());
         return chain.proceed(builder.build());
     }
 }
