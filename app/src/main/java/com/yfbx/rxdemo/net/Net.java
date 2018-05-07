@@ -49,9 +49,7 @@ public class Net {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(new HeaderInterceptor(getHeaders()));
         if (BuildConfig.DEBUG) {
-            LogInterceptor logInterceptor = new LogInterceptor();
-            logInterceptor.setLevel(LogInterceptor.Level.BODY);
-            client.addInterceptor(logInterceptor);
+            client.addInterceptor(new LogInterceptor());
         }
 
         Retrofit.Builder builder = new Retrofit.Builder();

@@ -90,12 +90,16 @@ public class LogInterceptor implements Interceptor {
         BODY
     }
 
+    private volatile Level level = Level.NONE;
 
     public LogInterceptor() {
+        this.level = Level.BODY;
     }
 
+    public LogInterceptor(Level level) {
+        this.level = level;
+    }
 
-    private volatile Level level = Level.NONE;
 
     /**
      * Change the level at which this interceptor logs.
