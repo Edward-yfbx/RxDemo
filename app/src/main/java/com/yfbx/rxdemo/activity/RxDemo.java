@@ -37,9 +37,8 @@ public class RxDemo extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pd = new ProgressDialog(this);
-
-        btn = (Button) findViewById(R.id.btn);
-        text = (TextView) findViewById(R.id.info);
+        btn = findViewById(R.id.btn);
+        text = findViewById(R.id.info);
     }
 
 

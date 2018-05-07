@@ -19,7 +19,7 @@ public class App extends Application {
     }
 
 
-    public static App getApp() {
+    public static App getInstance() {
         return app;
     }
 

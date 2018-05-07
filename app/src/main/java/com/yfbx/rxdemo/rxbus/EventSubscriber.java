@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.rxjava.rxbus;
+package com.yfbx.rxdemo.rxbus;
 
 import rx.Subscriber;
 
@@ -7,7 +7,7 @@ import rx.Subscriber;
  * <p>
  * Created by YoKeyword on 16/7/20.
  */
-public abstract class RxBusSubscriber<T> extends Subscriber<T> {
+public abstract class EventSubscriber<T> extends Subscriber<T> {
 
     @Override
     public void onNext(T t) {

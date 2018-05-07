@@ -1,4 +1,4 @@
-package com.yfbx.rxdemo.rxjava.net;
+package com.yfbx.rxdemo.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

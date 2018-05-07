@@ -1,6 +1,9 @@
-package com.yfbx.rxdemo.rxjava.rxbus;
+package com.yfbx.rxdemo.rxbus;
+
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
@@ -28,8 +31,14 @@ public class RxBus {
         return instance;
     }
 
-    public static <T> void registerEvent(Class<T> clazz, RxBusSubscriber<T> subscriber) {
-        getDefault().toObservable(clazz).observeOn(AndroidSchedulers.mainThread()).subscribe(subscriber);
+    /**
+     * 注册事件
+     */
+    public static <T> Subscription registerEvent(Class<T> clazz, EventSubscriber<T> subscriber) {
+        return getDefault().toObservable(clazz)
+                .observeOn(AndroidSchedulers.mainThread())
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .subscribe(subscriber);
     }
 
     public void post(Object event) {
