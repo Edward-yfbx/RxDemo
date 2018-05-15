@@ -12,7 +12,7 @@ import rx.schedulers.Schedulers;
  * Description:
  */
 
-public class NetTrans<T> implements Observable.Transformer<NetResult<T>, NetResult<T>> {
+public class Trans<T> implements Observable.Transformer<NetResult<T>, NetResult<T>> {
 
     @Override
     public Observable<NetResult<T>> call(Observable<NetResult<T>> observable) {

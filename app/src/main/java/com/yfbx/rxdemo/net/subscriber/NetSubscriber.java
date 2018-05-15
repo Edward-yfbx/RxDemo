@@ -1,15 +1,14 @@
 package com.yfbx.rxdemo.net.subscriber;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.yfbx.rxdemo.App;
 import com.yfbx.rxdemo.net.result.NetResult;
+import com.yfbx.rxdemo.utils.LoadingDialog;
+import com.yfbx.rxdemo.utils.NetConfig;
 
 import rx.Subscriber;
 
@@ -21,35 +20,42 @@ import rx.Subscriber;
 
 public abstract class NetSubscriber<T> extends Subscriber<NetResult<T>> implements DialogInterface.OnCancelListener {
 
-    private static final String TAG = "Net";
-    private ProgressDialog pd;
+    private LoadingDialog loadingView;
 
     public NetSubscriber() {
     }
 
     public NetSubscriber(Context context) {
-        pd = new ProgressDialog(context);
-        pd.setOnCancelListener(this);
+        loadingView = new LoadingDialog(context);
+        loadingView.setOnCancelListener(this);
     }
 
-    @Override
-    public void onStart() {
-        if (pd == null) {
+    private void showLoading() {
+        if (loadingView == null) {
             return;
         }
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                pd.show();
+                loadingView.show();
             }
         });
     }
 
+    private void dismissLoading() {
+        if (loadingView != null) {
+            loadingView.dismiss();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        showLoading();
+    }
+
     @Override
     public void onCompleted() {
-        if (pd != null) {
-            pd.dismiss();
-        }
+        dismissLoading();
     }
 
     @Override
@@ -60,14 +66,9 @@ public abstract class NetSubscriber<T> extends Subscriber<NetResult<T>> implemen
     @Override
     public void onError(Throwable e) {
         e.printStackTrace();
-        Toast.makeText(App.getInstance(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        dismissLoading();
+        boolean isNetAvailable = NetConfig.isNetAvailable(App.getInstance());
+        String msg = isNetAvailable ? "服务器异常" : "网络连接不可用";
+        Toast.makeText(App.getInstance(), msg, Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public void onNext(NetResult<T> result) {
-        onSuccess(result.code, result.message, result.data);
-    }
-
-    public abstract void onSuccess(int code, String msg, T t);
-
 }

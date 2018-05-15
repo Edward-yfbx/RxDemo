@@ -1,12 +1,12 @@
 package com.yfbx.rxdemo.net.subscriber;
 
-
-import com.yfbx.rxdemo.rxbus.event.FileLoadEvent;
 import com.yfbx.rxdemo.rxbus.EventSubscriber;
 import com.yfbx.rxdemo.rxbus.RxBus;
+import com.yfbx.rxdemo.rxbus.event.ProgressEvent;
 
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Author:Edward
@@ -19,7 +19,7 @@ public abstract class FileSubscriber<T> extends Subscriber<T> {
     private Subscription subscription;
 
     public FileSubscriber() {
-        subscribeLoadProgress();
+        onProgress();
     }
 
     @Override
@@ -30,18 +30,22 @@ public abstract class FileSubscriber<T> extends Subscriber<T> {
     @Override
     public void onError(Throwable e) {
         e.printStackTrace();
+        subscription.unsubscribe();
     }
 
-    public abstract void updateProgress(long progress, long total);
+    public abstract void updateProgress(int percent);
 
 
-    public void subscribeLoadProgress() {
-        subscription = RxBus.registerEvent(FileLoadEvent.class, new EventSubscriber<FileLoadEvent>() {
-            @Override
-            protected void onEvent(FileLoadEvent fileLoadEvent) {
-                updateProgress(fileLoadEvent.getBytesLoaded(), fileLoadEvent.getTotal());
-            }
-        });
+    public void onProgress() {
+        subscription = RxBus.getDefault()
+                .toObservable(ProgressEvent.class)
+                .onBackpressureBuffer()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new EventSubscriber<ProgressEvent>() {
+                    @Override
+                    protected void onEvent(ProgressEvent event) {
+                        updateProgress(event.percent);
+                    }
+                });
     }
-
 }

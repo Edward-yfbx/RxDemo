@@ -7,8 +7,9 @@ import com.yfbx.rxdemo.R;
 import com.yfbx.rxdemo.api.Api;
 import com.yfbx.rxdemo.bean.User;
 import com.yfbx.rxdemo.net.Net;
-import com.yfbx.rxdemo.net.subscriber.NetSubscriber;
-import com.yfbx.rxdemo.net.NetTrans;
+import com.yfbx.rxdemo.net.Trans;
+import com.yfbx.rxdemo.net.subscriber.ArraySubscriber;
+import com.yfbx.rxdemo.net.subscriber.EntitySubscriber;
 
 import java.util.List;
 
@@ -29,23 +30,22 @@ public class MainActivity extends AppCompatActivity {
     private void login() {
         Net.create(Api.class)
                 .login("admin", "admin")
-                .compose(new NetTrans<User>())
-                .subscribe(new NetSubscriber<User>(this) {
+                .compose(new Trans<User>())
+                .subscribe(new EntitySubscriber<User>(this) {
                     @Override
-                    public void onSuccess(int code, String msg, User user) {
+                    public void onSuccess(User user) {
 
                     }
-
                 });
     }
 
     private void getList() {
         Net.create(Api.class)
                 .getList("", "")
-                .compose(new NetTrans<List<User>>())
-                .subscribe(new NetSubscriber<List<User>>() {
+                .compose(new Trans<List<User>>())
+                .subscribe(new ArraySubscriber<User>() {
                     @Override
-                    public void onSuccess(int code, String msg, List<User> users) {
+                    public void onSuccess(List<User> list) {
 
                     }
                 });

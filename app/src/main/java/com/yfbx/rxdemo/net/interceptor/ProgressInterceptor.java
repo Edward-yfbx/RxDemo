@@ -1,7 +1,7 @@
 package com.yfbx.rxdemo.net.interceptor;
 
 
-import com.yfbx.rxdemo.net.result.ProgressResponseBody;
+import com.yfbx.rxdemo.net.result.FileResponseBody;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ public class ProgressInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response originalResponse = chain.proceed(chain.request());
         return originalResponse.newBuilder()
-                .body(new ProgressResponseBody(originalResponse.body()))
+                .body(new FileResponseBody(originalResponse.body()))
                 .build();
     }
 }

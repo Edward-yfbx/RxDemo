@@ -1,7 +1,7 @@
 package com.yfbx.rxdemo.net.result;
 
 
-import com.yfbx.rxdemo.rxbus.event.FileLoadEvent;
+import com.yfbx.rxdemo.rxbus.event.ProgressEvent;
 import com.yfbx.rxdemo.rxbus.RxBus;
 
 import java.io.IOException;
@@ -20,13 +20,13 @@ import okio.Source;
  * Description:
  */
 
-public class ProgressResponseBody extends ResponseBody {
+public class FileResponseBody extends ResponseBody {
 
     private ResponseBody responseBody;
 
     private BufferedSource bufferedSource;
 
-    public ProgressResponseBody(ResponseBody responseBody) {
+    public FileResponseBody(ResponseBody responseBody) {
         this.responseBody = responseBody;
     }
 
@@ -56,8 +56,7 @@ public class ProgressResponseBody extends ResponseBody {
             public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 bytesReaded += bytesRead == -1 ? 0 : bytesRead;
-                //实时发送当前已读取的字节和总字节
-                RxBus.getDefault().post(new FileLoadEvent(contentLength(), bytesReaded));
+                RxBus.getDefault().post(new ProgressEvent(contentLength(), bytesReaded));
                 return bytesRead;
             }
         };
